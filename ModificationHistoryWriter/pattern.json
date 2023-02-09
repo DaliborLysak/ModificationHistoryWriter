@@ -1,0 +1,1 @@
+{"Pattern":"// DATE  AUTHOR  TICKET          MESSAGE","DateFormat":"dd.MM.yyyy","Author":"AUTHOR","TicketPattern":"((REQ|DEF)\\d*)\\s*(.*)"}
