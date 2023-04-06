@@ -184,6 +184,7 @@
             this.Name = "ModificationHistoryWriterForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Modification History Writer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModificationHistoryWriterForm_FormClosing);
             this.Shown += new System.EventHandler(this.ModificationHistoryWriterForm_Shown);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using ModificationHistoryWriter;
 
 namespace ModificationHistoryWriterForm
@@ -32,17 +29,28 @@ namespace ModificationHistoryWriterForm
                 var line = ModificationHistoryWriterProvider.ModificationHistoryFormater.Format(pattern, Clipboard.GetText());
                 richTextBoxInput.Text = $"{HEADER_INPLACE_PATTERN}{line}";
                 this.lastLine = line;
+
+                ToastContentBuilderHelper.ShowMessage("Moddification history formated:", $"{this.lastLine}");
             }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
         private void toolStripButtonShowPattern_Click(object sender, EventArgs e)
         {
+            var patternInfo = $"{nameof(pattern.Pattern)}: {pattern.Pattern}";
+            var dateFormatInfo = $"{nameof(pattern.DateFormat)}: {pattern.DateFormat}";
+            var authorInfo = $"{nameof(pattern.Author)}: {pattern.Author}";
+            var ticketPatternInfo = $"{nameof(pattern.TicketPattern)}: {pattern.TicketPattern}";
+
             this.listBoxFiles.Items.Clear();
-            this.listBoxFiles.Items.Add($"{nameof(pattern.Pattern)}: {pattern.Pattern}");
-            this.listBoxFiles.Items.Add($"{nameof(pattern.DateFormat)}: {pattern.DateFormat}");
-            this.listBoxFiles.Items.Add($"{nameof(pattern.Author)}: {pattern.Author}");
-            this.listBoxFiles.Items.Add($"{nameof(pattern.TicketPattern)}: {pattern.TicketPattern}");
+            this.listBoxFiles.Items.Add(patternInfo);
+            this.listBoxFiles.Items.Add(dateFormatInfo);
+            this.listBoxFiles.Items.Add(authorInfo);
+            this.listBoxFiles.Items.Add(ticketPatternInfo);
+
+            ToastContentBuilderHelper.ShowMessage(
+                "Pattern Info",
+                $"{patternInfo}{Environment.NewLine}{dateFormatInfo}{Environment.NewLine}{authorInfo}{Environment.NewLine}{ticketPatternInfo}");
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
@@ -89,6 +97,8 @@ namespace ModificationHistoryWriterForm
         {
             if (!String.IsNullOrEmpty(this.lastLine))
                 Clipboard.SetText(this.lastLine);
+
+            ToastContentBuilderHelper.ShowMessage("Copy to clipboard", $"{this.lastLine}");
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
@@ -111,6 +121,8 @@ namespace ModificationHistoryWriterForm
                 }
 
                 Task.WaitAll(tasks.ToArray());
+
+                ToastContentBuilderHelper.ShowMessage("Modification history was written to all files", DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss"));
             }
             catch (AggregateException exc)
             {
@@ -125,6 +137,11 @@ namespace ModificationHistoryWriterForm
                 this.Enabled = true;
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private void ModificationHistoryWriterForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ToastContentBuilderHelper.ClearAndClose();
         }
     }
 }
