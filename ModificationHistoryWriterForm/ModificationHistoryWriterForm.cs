@@ -87,7 +87,8 @@ namespace ModificationHistoryWriterForm
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
         private void toolStripButtonCopyToClipboard_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(this.lastLine);
+            if (!String.IsNullOrEmpty(this.lastLine))
+                Clipboard.SetText(this.lastLine);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
