@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace ModificationHistoryWriter
 {
+    /// <inheritdoc cref="IModificationHistoryFileWriter"/>
     internal class ModificationHistoryFileWriter : IModificationHistoryFileWriter
     {
+        /// <inheritdoc/>
         public void Write(string path, string log)
         {
             if (!String.IsNullOrEmpty(path) && File.Exists(path) && !String.IsNullOrEmpty(log))
@@ -36,11 +38,19 @@ namespace ModificationHistoryWriter
             }
         }
 
+        /// <summary>
+        /// Returns <c>true</c> when <paramref name="line"/> is a history comment and
+        /// <paramref name="nextLine"/> is empty, indicating the insertion point.
+        /// </summary>
         private static bool IsLastHistoryLine(string line, string nextLine)
         {
             return IsHistoryLine(line) && String.IsNullOrEmpty(nextLine);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> when <paramref name="line"/> matches the modification
+        /// history comment pattern <c>// ... [...] ...</c>.
+        /// </summary>
         private static bool IsHistoryLine(string line)
         {
             var isHistoryLine = false;

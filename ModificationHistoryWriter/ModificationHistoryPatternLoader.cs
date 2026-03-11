@@ -3,11 +3,13 @@ using System.Text.Json;
 
 namespace ModificationHistoryWriter
 {
+    /// <inheritdoc cref="IModificationHistoryPatternLoader"/>
     internal class ModificationHistoryPatternLoader : IModificationHistoryPatternLoader
     {
         private const string PATTERN_FILE_NAME = "pattern.json";
         private const string MODIFICATION_HISTORY_WRITER = "ModificationHistoryWriter";
 
+        /// <inheritdoc/>
         public ModificationHistoryPattern Load()
         {
             ModificationHistoryPattern pattern = new ModificationHistoryPattern();
@@ -26,6 +28,7 @@ namespace ModificationHistoryWriter
             return pattern;
         }
 
+        /// <inheritdoc/>
         public async void Save(ModificationHistoryPattern pattern)
         {
             var patternFolder = Path.Combine(

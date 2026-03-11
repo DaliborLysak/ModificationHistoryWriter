@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace ModificationHistoryWriter
 {
+    /// <inheritdoc cref="IModificationHistoryFormater"/>
     internal class ModificationHistoryFormater : IModificationHistoryFormater
     {
+        /// <inheritdoc/>
         public string Format(ModificationHistoryPattern pattern, string input)
         {
             if (pattern is null || String.IsNullOrEmpty(input))
@@ -30,6 +32,12 @@ namespace ModificationHistoryWriter
             return output;
         }
 
+        /// <summary>
+        /// Normalizes <paramref name="text"/> to Unicode form D, removes all
+        /// non-spacing mark characters (accents), and re-normalizes to form C.
+        /// </summary>
+        /// <param name="text">The text to process.</param>
+        /// <returns>The input string with all diacritics removed.</returns>
         private static string RemoveDiacritics(string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
