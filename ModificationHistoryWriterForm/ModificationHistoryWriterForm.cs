@@ -18,6 +18,7 @@ namespace ModificationHistoryWriterForm
 // -----------------------------------------------------------------------------
 ";
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public string[] ApplicationArguments { get; set; } = Array.Empty<string>();
         private string lastLine = string.Empty;
 
