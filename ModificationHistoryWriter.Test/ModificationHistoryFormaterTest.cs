@@ -3,10 +3,13 @@ namespace ModificationHistoryWriter.Test
     public class ModificationHistoryFormaterTest
     {
         [Theory]
-        [InlineData("IMP666 improvement", "// 09.02.2023  Author  IMP666          improvement")]
-        [InlineData("BUG666 bug", "// 09.02.2023  Author  BUG666          bug")]
-        public void FormatTest(string ticketIdAndName, string logLine)
+        [InlineData("IMP666 improvement", "IMP666", "improvement")]
+        [InlineData("BUG666 bug", "BUG666", "bug")]
+        public void FormatTest(string ticketIdAndName, string expectedTicket, string expectedMessage)
         {
+            var date = DateTime.Today.ToString("dd.MM.yyyy");
+            var expectedLine = $"// {date}  Author  {expectedTicket}          {expectedMessage}";
+
             var formater = new ModificationHistoryFormater();
             var log = formater.Format(
                 new ModificationHistoryPattern()
@@ -18,7 +21,7 @@ namespace ModificationHistoryWriter.Test
                 },
                 ticketIdAndName);
 
-            Assert.Equal(logLine, log);
+            Assert.Equal(expectedLine, log);
         }
     }
 }
