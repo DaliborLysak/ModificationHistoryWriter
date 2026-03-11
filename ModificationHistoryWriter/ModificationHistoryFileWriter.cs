@@ -15,7 +15,8 @@ namespace ModificationHistoryWriter
         {
             if (!String.IsNullOrEmpty(path) && File.Exists(path) && !String.IsNullOrEmpty(log))
             {
-                var lines = File.ReadAllLines(path, Encoding.UTF8);
+                var encoding = GetEncoding(path);
+                var lines = File.ReadAllLines(path, encoding);
                 var lineNumber = 0;
 
                 while (lineNumber < lines.Length)
@@ -34,8 +35,21 @@ namespace ModificationHistoryWriter
                     lineNumber++;
                 }
 
-                File.WriteAllLines(path, lines, Encoding.UTF8);
+                File.WriteAllLines(path, lines, encoding);
             }
+        }
+
+        /// <summary>
+        /// Detects the encoding of the file at <paramref name="path"/> by inspecting
+        /// its byte order mark (BOM). Falls back to UTF-8 without BOM when no BOM is present.
+        /// </summary>
+        /// <param name="path">The absolute path to the file to inspect.</param>
+        /// <returns>The detected <see cref="Encoding"/> of the file.</returns>
+        internal static Encoding GetEncoding(string path)
+        {
+            using var reader = new StreamReader(path, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: true);
+            reader.Peek();
+            return reader.CurrentEncoding;
         }
 
         /// <summary>
