@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,13 +11,22 @@ namespace ModificationHistoryWriter
     /// <inheritdoc cref="IModificationHistoryFileWriter"/>
     internal class ModificationHistoryFileWriter : IModificationHistoryFileWriter
     {
+        private readonly IFileSystem _fileSystem;
+
+        public ModificationHistoryFileWriter() : this(new FileSystem()) { }
+
+        internal ModificationHistoryFileWriter(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         /// <inheritdoc/>
         public void Write(string path, string log)
         {
-            if (!String.IsNullOrEmpty(path) && File.Exists(path) && !String.IsNullOrEmpty(log))
+            if (!String.IsNullOrEmpty(path) && _fileSystem.File.Exists(path) && !String.IsNullOrEmpty(log))
             {
                 var encoding = GetEncoding(path);
-                var lines = File.ReadAllLines(path, encoding);
+                var lines = _fileSystem.File.ReadAllLines(path, encoding);
                 var lineNumber = 0;
 
                 while (lineNumber < lines.Length)
@@ -35,7 +45,7 @@ namespace ModificationHistoryWriter
                     lineNumber++;
                 }
 
-                File.WriteAllLines(path, lines, encoding);
+                _fileSystem.File.WriteAllLines(path, lines, encoding);
             }
         }
 
@@ -45,9 +55,10 @@ namespace ModificationHistoryWriter
         /// </summary>
         /// <param name="path">The absolute path to the file to inspect.</param>
         /// <returns>The detected <see cref="Encoding"/> of the file.</returns>
-        internal static Encoding GetEncoding(string path)
+        internal Encoding GetEncoding(string path)
         {
-            using var reader = new StreamReader(path, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: true);
+            using var stream = _fileSystem.File.OpenRead(path);
+            using var reader = new StreamReader(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: true);
             reader.Peek();
             return reader.CurrentEncoding;
         }
