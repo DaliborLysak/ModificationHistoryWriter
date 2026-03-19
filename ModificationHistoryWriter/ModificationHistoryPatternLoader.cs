@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace ModificationHistoryWriter
 {
@@ -41,7 +42,23 @@ namespace ModificationHistoryWriter
                 }
             }
 
-            return pattern;
+            return IsValid(pattern) ? pattern : new ModificationHistoryPattern();
+        }
+
+        private static bool IsValid(ModificationHistoryPattern pattern)
+        {
+            if (string.IsNullOrEmpty(pattern.TicketPattern) || string.IsNullOrEmpty(pattern.DateFormat))
+                return false;
+
+            try
+            {
+                _ = new Regex(pattern.TicketPattern);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>

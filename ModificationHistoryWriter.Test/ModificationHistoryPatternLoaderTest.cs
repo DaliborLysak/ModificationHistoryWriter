@@ -120,5 +120,68 @@ namespace ModificationHistoryWriter.Test
             Assert.Equal(string.Empty, pattern.DateFormat);
             Assert.Equal(string.Empty, pattern.TicketPattern);
         }
+
+        [Fact]
+        public void Load_WhenTicketPatternIsInvalidRegex_ReturnsDefaultEmptyPattern()
+        {
+            var invalid = new ModificationHistoryPattern
+            {
+                Pattern = "// DATE  AUTHOR  TICKET  MESSAGE",
+                DateFormat = "dd.MM.yyyy",
+                Author = "dlysak",
+                TicketPattern = "((unclosed"
+            };
+
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                [PatternFile] = new MockFileData(JsonSerializer.Serialize(invalid))
+            });
+
+            var pattern = new ModificationHistoryPatternLoader(fs, AppDataPath).Load();
+
+            Assert.Equal(string.Empty, pattern.TicketPattern);
+        }
+
+        [Fact]
+        public void Load_WhenDateFormatIsEmpty_ReturnsDefaultEmptyPattern()
+        {
+            var invalid = new ModificationHistoryPattern
+            {
+                Pattern = "// DATE  AUTHOR  TICKET  MESSAGE",
+                DateFormat = "",
+                Author = "dlysak",
+                TicketPattern = "((REQ|DEF)\\d*)\\s*(.*)"
+            };
+
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                [PatternFile] = new MockFileData(JsonSerializer.Serialize(invalid))
+            });
+
+            var pattern = new ModificationHistoryPatternLoader(fs, AppDataPath).Load();
+
+            Assert.Equal(string.Empty, pattern.DateFormat);
+        }
+
+        [Fact]
+        public void Load_WhenTicketPatternIsEmpty_ReturnsDefaultEmptyPattern()
+        {
+            var invalid = new ModificationHistoryPattern
+            {
+                Pattern = "// DATE  AUTHOR  TICKET  MESSAGE",
+                DateFormat = "dd.MM.yyyy",
+                Author = "dlysak",
+                TicketPattern = ""
+            };
+
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                [PatternFile] = new MockFileData(JsonSerializer.Serialize(invalid))
+            });
+
+            var pattern = new ModificationHistoryPatternLoader(fs, AppDataPath).Load();
+
+            Assert.Equal(string.Empty, pattern.TicketPattern);
+        }
     }
 }
