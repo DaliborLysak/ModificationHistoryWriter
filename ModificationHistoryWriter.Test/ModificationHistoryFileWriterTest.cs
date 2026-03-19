@@ -1,5 +1,8 @@
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace ModificationHistoryWriter.Test
 {
@@ -173,6 +176,45 @@ namespace ModificationHistoryWriter.Test
 
             var result = fs.File.ReadAllLines(TestFilePath);
             Assert.Contains("public class Foo { }", result);
+        }
+
+        [Fact]
+        public void Write_WhenReadFails_ThrowsIOExceptionWithFilePath()
+        {
+            var fileInfo = Substitute.For<IFileInfoFactory>();
+            var fs = Substitute.For<IFileSystem>();
+            fs.File.Exists(TestFilePath).Returns(true);
+            fs.File.OpenRead(TestFilePath).Returns(_ => throw new UnauthorizedAccessException("Access denied"));
+
+            var writer = new ModificationHistoryFileWriter(fs);
+            var ex = Assert.Throws<IOException>(() => writer.Write(TestFilePath, "// 11.03.2026  Author  REQ1  fix"));
+
+            Assert.Contains(TestFilePath, ex.Message);
+            Assert.IsType<UnauthorizedAccessException>(ex.InnerException);
+        }
+
+        [Fact]
+        public void Write_WhenWriteFails_ThrowsIOExceptionWithFilePath()
+        {
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                [TestFilePath] = new MockFileData(Encoding.UTF8.GetBytes(
+                    "// MODIFICATION HISTORY\r\n// 10.03.2026  Author  REQ1  init\r\n\r\n"))
+            });
+
+            var wrappedFs = Substitute.For<IFileSystem>();
+            var fileSub = wrappedFs.File;
+            fileSub.Exists(TestFilePath).Returns(true);
+            fileSub.OpenRead(TestFilePath).Returns(_ => fs.File.OpenRead(TestFilePath));
+            fileSub.ReadAllLines(TestFilePath, Arg.Any<Encoding>())
+                .Returns(_ => fs.File.ReadAllLines(TestFilePath));
+            fileSub.When(f => f.WriteAllLines(Arg.Any<string>(), Arg.Any<string[]>(), Arg.Any<Encoding>()))
+                .Do(_ => throw new IOException("Disk full"));
+
+            var writer = new ModificationHistoryFileWriter(wrappedFs);
+            var ex = Assert.Throws<IOException>(() => writer.Write(TestFilePath, "// 11.03.2026  Author  REQ1  fix"));
+
+            Assert.Contains(TestFilePath, ex.Message);
         }
 
         [Fact]

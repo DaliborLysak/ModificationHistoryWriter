@@ -25,27 +25,34 @@ namespace ModificationHistoryWriter
         {
             if (!String.IsNullOrEmpty(path) && _fileSystem.File.Exists(path) && !String.IsNullOrEmpty(log))
             {
-                var encoding = GetEncoding(path);
-                var lines = _fileSystem.File.ReadAllLines(path, encoding);
-                var lineNumber = 0;
-
-                while (lineNumber < lines.Length)
+                try
                 {
-                    var line = lines[lineNumber];
+                    var encoding = GetEncoding(path);
+                    var lines = _fileSystem.File.ReadAllLines(path, encoding);
+                    var lineNumber = 0;
 
-                    if (!String.IsNullOrEmpty(line) || line.Equals(Environment.NewLine))
+                    while (lineNumber < lines.Length)
                     {
-                        if ((lineNumber + 1 < lines.Length) && IsLastHistoryLine(line, lines[lineNumber + 1]))
+                        var line = lines[lineNumber];
+
+                        if (!String.IsNullOrEmpty(line) || line.Equals(Environment.NewLine))
                         {
-                            lines[lineNumber] = $"{line}{Environment.NewLine}{log}";
-                            lineNumber = lines.Length;
+                            if ((lineNumber + 1 < lines.Length) && IsLastHistoryLine(line, lines[lineNumber + 1]))
+                            {
+                                lines[lineNumber] = $"{line}{Environment.NewLine}{log}";
+                                lineNumber = lines.Length;
+                            }
                         }
+
+                        lineNumber++;
                     }
 
-                    lineNumber++;
+                    _fileSystem.File.WriteAllLines(path, lines, encoding);
                 }
-
-                _fileSystem.File.WriteAllLines(path, lines, encoding);
+                catch (Exception ex)
+                {
+                    throw new IOException($"Failed to write modification history to '{path}': {ex.Message}", ex);
+                }
             }
         }
 
