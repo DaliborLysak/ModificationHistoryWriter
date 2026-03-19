@@ -115,9 +115,10 @@ namespace ModificationHistoryWriterForm
                 var tasks = new List<Task>();
                 foreach (string path in listBoxFiles.Items)
                 {
-                    tasks.Add(Task.Factory.StartNew(() =>
+                    var localPath = path;
+                    tasks.Add(Task.Run(() =>
                     {
-                        ModificationHistoryWriterProvider.ModificationHistoryFileWriter.Write(path, this.lastLine);
+                        ModificationHistoryWriterProvider.ModificationHistoryFileWriter.Write(localPath, this.lastLine);
                     }));
                 }
 
