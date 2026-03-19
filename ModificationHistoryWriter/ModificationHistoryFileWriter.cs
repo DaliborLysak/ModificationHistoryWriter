@@ -81,17 +81,12 @@ namespace ModificationHistoryWriter
 
         /// <summary>
         /// Returns <c>true</c> when <paramref name="line"/> matches the modification
-        /// history comment pattern <c>// ... [...] ...</c>.
+        /// history entry pattern: a comment starting with a date in <c>DD.MM.YYYY</c> format,
+        /// e.g. <c>// 19.03.2026  dlysak   REQ012345 blablabla</c>.
         /// </summary>
         private static bool IsHistoryLine(string line)
         {
-            var isHistoryLine = false;
-            foreach (Match match in Regex.Matches(line, @"//.*\[{0,1}.*\]{0,1}\s*.*", RegexOptions.IgnoreCase))
-            {
-                isHistoryLine = match.Success; // should by only one
-            }
-
-            return isHistoryLine;
+            return Regex.IsMatch(line, @"^\s*//\s+\d{2}\.\d{2}\.\d{4}");
         }
     }
 }

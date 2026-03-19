@@ -92,6 +92,37 @@ namespace ModificationHistoryWriter.Test
             Assert.Empty(encoding.GetPreamble());
         }
 
+        // --- IsHistoryLine tests (via Write behaviour) ---
+
+        [Theory]
+        [InlineData("// 19.03.2026  dlysak   REQ012345 blablabla", true)]
+        [InlineData("// 01.01.2024  jsmith   DEF001 fix null ref", true)]
+        [InlineData("// 31.12.2023  a.novak  IMP999 refactor service", true)]
+        [InlineData("// MODIFICATION HISTORY", false)]
+        [InlineData("// -----------------------------------------------------------------------------", false)]
+        [InlineData("// TODO: fix this bug", false)]
+        [InlineData("// Copyright 2026 Acme Corp", false)]
+        [InlineData("// 2026/03/19  dlysak  REQ1  wrong separator", false)]
+        [InlineData("// 19-03-2026  dlysak  REQ1  wrong separator", false)]
+        [InlineData("public class Foo { }", false)]
+        [InlineData("", false)]
+        public void Write_IsHistoryLine_MatchesOnlyDotSeparatedDateEntries(string line, bool expectedIsHistory)
+        {
+            // Build a file where the candidate line is followed by an empty line.
+            // If IsHistoryLine returns true, Write() will insert after it; otherwise the file stays unchanged.
+            var originalLines = new[] { line, "" };
+            var fs = CreateFileSystem(TestFilePath, originalLines);
+            var originalContent = fs.File.ReadAllText(TestFilePath);
+
+            new ModificationHistoryFileWriter(fs).Write(TestFilePath, "// 19.03.2026  dlysak   REQ099 new entry");
+
+            var contentAfter = fs.File.ReadAllText(TestFilePath);
+            if (expectedIsHistory)
+                Assert.NotEqual(originalContent, contentAfter);
+            else
+                Assert.Equal(originalContent, contentAfter);
+        }
+
         // --- Write tests ---
 
         [Fact]
