@@ -19,17 +19,25 @@ namespace ModificationHistoryWriter
 
             var output = pattern.Pattern;
 
-            foreach (var match in Regex.Matches(input, pattern.TicketPattern, RegexOptions.IgnoreCase).Cast<Match>())
+            var match = Regex.Matches(input, pattern.TicketPattern, RegexOptions.IgnoreCase)
+                             .Cast<Match>()
+                             .FirstOrDefault();
+
+            if (match != null)
             {
-                output = output.Replace("DATE", DateTime.Today.ToString(pattern.DateFormat));
-                output = output.Replace("AUTHOR", pattern.Author);
-                output = output.Replace("TICKET", match.Groups[1]?.Value ?? String.Empty);
-                output = output.Replace("MESSAGE", match.Groups[3]?.Value ?? String.Empty);
+                var tokens = new Dictionary<string, string>
+                {
+                    ["DATE"]    = DateTime.Today.ToString(pattern.DateFormat),
+                    ["AUTHOR"]  = pattern.Author,
+                    ["TICKET"]  = match.Groups[1]?.Value ?? String.Empty,
+                    ["MESSAGE"] = match.Groups[3]?.Value ?? String.Empty,
+                };
+
+                var tokenPattern = string.Join("|", tokens.Keys.Select(k => Regex.Escape(k)));
+                output = Regex.Replace(output, tokenPattern, m => tokens[m.Value]);
             }
 
-            output = RemoveDiacritics(output);
-
-            return output;
+            return RemoveDiacritics(output);
         }
 
         /// <summary>

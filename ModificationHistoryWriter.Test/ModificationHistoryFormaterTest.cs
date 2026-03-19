@@ -94,5 +94,48 @@ namespace ModificationHistoryWriter.Test
 
             Assert.Contains(DateTime.Today.ToString("yyyy/MM/dd"), log);
         }
+
+        [Fact]
+        public void Format_AuthorContainsDateToken_DoesNotDoubleReplaceDate()
+        {
+            var formater = new ModificationHistoryFormater();
+            var pattern = new ModificationHistoryPattern
+            {
+                Author = "DATE Smith",
+                DateFormat = "dd.MM.yyyy",
+                Pattern = "// DATE  AUTHOR  TICKET  MESSAGE",
+                TicketPattern = "((IMP|BUG)\\d*)\\s*(.*)"
+            };
+
+            var log = formater.Format(pattern, "IMP1 fix");
+
+            // "DATE" inside the author value must not be replaced with the actual date
+            Assert.Contains("DATE Smith", log);
+            // The DATE token in the pattern must still be replaced with today's date
+            Assert.Contains(DateTime.Today.ToString("dd.MM.yyyy"), log);
+        }
+
+        [Fact]
+        public void Format_MessageContainsTicketToken_DoesNotDoubleReplaceTicket()
+        {
+            var formater = new ModificationHistoryFormater();
+            var log = formater.Format(DefaultPattern, "IMP666 fix TICKET overflow");
+
+            // "TICKET" inside the message must stay as literal text, not be replaced again
+            Assert.Contains("fix TICKET overflow", log);
+            Assert.Contains("IMP666", log);
+        }
+
+        [Fact]
+        public void Format_MultipleRegexMatches_UsesFirstMatchOnly()
+        {
+            var formater = new ModificationHistoryFormater();
+            // Two matches on separate lines so each message doesn't bleed into the other
+            var log = formater.Format(DefaultPattern, "IMP1 first\nIMP2 second");
+
+            Assert.Contains("IMP1", log);
+            Assert.Contains("first", log);
+            Assert.DoesNotContain("IMP2", log);
+        }
     }
 }
