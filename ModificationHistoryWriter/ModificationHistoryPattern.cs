@@ -20,19 +20,19 @@
         /// </list>
         /// Example: <c>// DATE  AUTHOR  TICKET          MESSAGE</c>
         /// </summary>
-        public string Pattern { get; set; } = String.Empty;
+        public string Pattern { get; set; } = string.Empty;
 
         /// <summary>
         /// A .NET date format string used to render today's date into the <c>DATE</c> token.
         /// Example: <c>dd.MM.yyyy</c>
         /// </summary>
-        public string DateFormat { get; set; } = String.Empty;
+        public string DateFormat { get; set; } = string.Empty;
 
         /// <summary>
         /// The author name inserted into the <c>AUTHOR</c> token.
         /// Accented characters are automatically stripped before writing.
         /// </summary>
-        public string Author { get; set; } = String.Empty;
+        public string Author { get; set; } = string.Empty;
 
         /// <summary>
         /// A regular expression applied to the raw input string (e.g. a commit message).
@@ -45,6 +45,6 @@
         /// </para>
         /// Example: <c>((REQ|DEF)\d*)\s*(.*)</c>
         /// </summary>
-        public string TicketPattern { get; set; } = String.Empty;
+        public string TicketPattern { get; set; } = string.Empty;
     }
 }

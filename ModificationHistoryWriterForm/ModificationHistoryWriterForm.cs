@@ -31,7 +31,7 @@ namespace ModificationHistoryWriterForm
                 richTextBoxInput.Text = $"{HEADER_INPLACE_PATTERN}{line}";
                 this.lastLine = line;
 
-                ToastContentBuilderHelper.ShowMessage("Moddification history formated:", $"{this.lastLine}");
+                ToastContentBuilderHelper.ShowMessage("Modification history formatted:", $"{this.lastLine}");
             }
         }
 
@@ -96,7 +96,7 @@ namespace ModificationHistoryWriterForm
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
         private void toolStripButtonCopyToClipboard_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(this.lastLine))
+            if (!string.IsNullOrEmpty(this.lastLine))
                 Clipboard.SetText(this.lastLine);
 
             ToastContentBuilderHelper.ShowMessage("Copy to clipboard", $"{this.lastLine}");
@@ -105,7 +105,7 @@ namespace ModificationHistoryWriterForm
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
         private void toolStripButtonSave_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(this.lastLine))
+            if (string.IsNullOrEmpty(this.lastLine))
                 return;
 
             Cursor.Current = Cursors.WaitCursor;

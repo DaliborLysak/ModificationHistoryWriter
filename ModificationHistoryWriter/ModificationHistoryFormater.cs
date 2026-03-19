@@ -14,8 +14,8 @@ namespace ModificationHistoryWriter
         /// <inheritdoc/>
         public string Format(ModificationHistoryPattern pattern, string input)
         {
-            if (pattern is null || String.IsNullOrEmpty(input))
-                return String.Empty;
+            if (pattern is null || string.IsNullOrEmpty(input))
+                return string.Empty;
 
             var output = pattern.Pattern;
 
@@ -29,8 +29,8 @@ namespace ModificationHistoryWriter
                 {
                     ["DATE"]    = DateTime.Today.ToString(pattern.DateFormat),
                     ["AUTHOR"]  = pattern.Author,
-                    ["TICKET"]  = match.Groups[1]?.Value ?? String.Empty,
-                    ["MESSAGE"] = match.Groups[3]?.Value ?? String.Empty,
+                    ["TICKET"]  = match.Groups[1]?.Value ?? string.Empty,
+                    ["MESSAGE"] = match.Groups[3]?.Value ?? string.Empty,
                 };
 
                 var tokenPattern = string.Join("|", tokens.Keys.Select(k => Regex.Escape(k)));

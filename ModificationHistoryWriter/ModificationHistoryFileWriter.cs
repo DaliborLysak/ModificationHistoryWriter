@@ -23,7 +23,7 @@ namespace ModificationHistoryWriter
         /// <inheritdoc/>
         public void Write(string path, string log)
         {
-            if (!String.IsNullOrEmpty(path) && _fileSystem.File.Exists(path) && !String.IsNullOrEmpty(log))
+            if (!string.IsNullOrEmpty(path) && _fileSystem.File.Exists(path) && !string.IsNullOrEmpty(log))
             {
                 try
                 {
@@ -35,7 +35,7 @@ namespace ModificationHistoryWriter
                     {
                         var line = lines[lineNumber];
 
-                        if (!String.IsNullOrEmpty(line) || line.Equals(Environment.NewLine))
+                        if (!string.IsNullOrEmpty(line) || line.Equals(Environment.NewLine))
                         {
                             if ((lineNumber + 1 < lines.Length) && IsLastHistoryLine(line, lines[lineNumber + 1]))
                             {
@@ -76,7 +76,7 @@ namespace ModificationHistoryWriter
         /// </summary>
         private static bool IsLastHistoryLine(string line, string nextLine)
         {
-            return IsHistoryLine(line) && String.IsNullOrEmpty(nextLine);
+            return IsHistoryLine(line) && string.IsNullOrEmpty(nextLine);
         }
 
         /// <summary>
