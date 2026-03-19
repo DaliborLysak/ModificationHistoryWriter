@@ -30,8 +30,15 @@ namespace ModificationHistoryWriter
 
             if (_fileSystem.File.Exists(patternFile))
             {
-                string jsonString = _fileSystem.File.ReadAllText(patternFile);
-                pattern = JsonSerializer.Deserialize<ModificationHistoryPattern>(jsonString)!;
+                try
+                {
+                    string jsonString = _fileSystem.File.ReadAllText(patternFile);
+                    pattern = JsonSerializer.Deserialize<ModificationHistoryPattern>(jsonString) ?? pattern;
+                }
+                catch (JsonException)
+                {
+                    // corrupted or invalid JSON — fall back to default empty pattern
+                }
             }
 
             return pattern;

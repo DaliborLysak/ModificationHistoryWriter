@@ -82,5 +82,43 @@ namespace ModificationHistoryWriter.Test
             Assert.True(fs.Directory.Exists(@"C:\AppData\ModificationHistoryWriter"));
             Assert.True(fs.File.Exists(PatternFile));
         }
+
+        [Fact]
+        public void Load_WhenFileContainsInvalidJson_ReturnsDefaultEmptyPattern()
+        {
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                [PatternFile] = new MockFileData("this is not valid json {{{")
+            });
+
+            var loader = new ModificationHistoryPatternLoader(fs, AppDataPath);
+
+            var pattern = loader.Load();
+
+            Assert.NotNull(pattern);
+            Assert.Equal(string.Empty, pattern.Pattern);
+            Assert.Equal(string.Empty, pattern.Author);
+            Assert.Equal(string.Empty, pattern.DateFormat);
+            Assert.Equal(string.Empty, pattern.TicketPattern);
+        }
+
+        [Fact]
+        public void Load_WhenFileContainsJsonNull_ReturnsDefaultEmptyPattern()
+        {
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                [PatternFile] = new MockFileData("null")
+            });
+
+            var loader = new ModificationHistoryPatternLoader(fs, AppDataPath);
+
+            var pattern = loader.Load();
+
+            Assert.NotNull(pattern);
+            Assert.Equal(string.Empty, pattern.Pattern);
+            Assert.Equal(string.Empty, pattern.Author);
+            Assert.Equal(string.Empty, pattern.DateFormat);
+            Assert.Equal(string.Empty, pattern.TicketPattern);
+        }
     }
 }
