@@ -27,6 +27,6 @@ namespace ModificationHistoryWriter
         /// target directory if it does not already exist.
         /// </summary>
         /// <param name="pattern">The pattern configuration to persist.</param>
-        void Save(ModificationHistoryPattern pattern);
+        Task Save(ModificationHistoryPattern pattern);
     }
 }

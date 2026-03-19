@@ -61,9 +61,7 @@ namespace ModificationHistoryWriter.Test
 
             var fs = new MockFileSystem();
             var loader = new ModificationHistoryPatternLoader(fs, AppDataPath);
-            loader.Save(expected);
-
-            await Task.Delay(200);
+            await loader.Save(expected);
 
             var pattern = loader.Load();
 
@@ -79,9 +77,7 @@ namespace ModificationHistoryWriter.Test
             var fs = new MockFileSystem();
             var loader = new ModificationHistoryPatternLoader(fs, AppDataPath);
 
-            loader.Save(new ModificationHistoryPattern { Author = "Test" });
-
-            await Task.Delay(200);
+            await loader.Save(new ModificationHistoryPattern { Author = "Test" });
 
             Assert.True(fs.Directory.Exists(@"C:\AppData\ModificationHistoryWriter"));
             Assert.True(fs.File.Exists(PatternFile));

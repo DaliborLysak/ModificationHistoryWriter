@@ -38,7 +38,7 @@ namespace ModificationHistoryWriter
         }
 
         /// <inheritdoc/>
-        public async void Save(ModificationHistoryPattern pattern)
+        public async Task Save(ModificationHistoryPattern pattern)
         {
             var patternFolder = _fileSystem.Path.Combine(_appDataPath, MODIFICATION_HISTORY_WRITER);
 
